@@ -1,13 +1,15 @@
 import type { NextConfig } from "next";
 
+const repo = 'TheTechLedger.github.io';
+
+/** @type {import('next').NextConfig} */
 const nextConfig: NextConfig = {
   output: 'export',
-  trailingSlash: true,
+  basePath: `/${repo}`,
+  assetPrefix: `/${repo}/`,
   images: {
     unoptimized: true,
   },
-  basePath: process.env.NODE_ENV === 'production' ? '/TheTechLedger.github.io' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/TheTechLedger.github.io/' : '',
 };
 
 export default nextConfig;
