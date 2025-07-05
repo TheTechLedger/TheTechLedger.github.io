@@ -160,27 +160,25 @@ const categoryNames: Record<string, string> = {
   "automotive-tech": "Automotive Tech"
 };
 
+export async function generateStaticParams() {
+  return Object.keys(categoryNames).map((slug) => ({
+    slug,
+  }));
+}
+
 interface CategoryPageProps {
-  params: Promise<{
-    slug: string;
-  }>;
-  searchParams: Promise<{
-    q?: string;
-    page?: string;
-  }>;
+  params: any;
 }
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug } = params as { slug: string };
   const categoryName = categoryNames[slug];
-  
   if (!categoryName) {
     return {
       title: 'Category Not Found - The Tech Ledger',
       description: 'The requested category could not be found.',
     };
   }
-
   return {
     title: `${categoryName} Articles - The Tech Ledger`,
     description: `Browse the latest ${categoryName.toLowerCase()} articles, news, and insights from The Tech Ledger.`,
@@ -188,41 +186,17 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   };
 }
 
-export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
-  const { slug } = await params;
-  const resolvedSearchParams = await searchParams;
+export default function CategoryPage({ params }: CategoryPageProps) {
+  const { slug } = params as { slug: string };
   const categoryName = categoryNames[slug];
-  
   if (!categoryName) {
     notFound();
   }
-
-  // Filter articles by category
-  let categoryArticles = mockArticles.filter(article => 
+  // Show all articles in this category
+  const categoryArticles = mockArticles.filter(article =>
     article.category.toLowerCase().replace(/\s+/g, '-') === slug
   );
-
-  // Apply search filter if provided
-  if (resolvedSearchParams.q) {
-    const query = resolvedSearchParams.q.toLowerCase();
-    categoryArticles = categoryArticles.filter(article =>
-      article.title.toLowerCase().includes(query) ||
-      article.excerpt.toLowerCase().includes(query) ||
-      article.content.toLowerCase().includes(query) ||
-      article.tags?.some(tag => tag.toLowerCase().includes(query))
-    );
-  }
-
-  // Pagination
-  const page = parseInt(resolvedSearchParams.page || '1');
-  const articlesPerPage = 9;
-  const totalPages = Math.ceil(categoryArticles.length / articlesPerPage);
-  const startIndex = (page - 1) * articlesPerPage;
-  const endIndex = startIndex + articlesPerPage;
-  const paginatedArticles = categoryArticles.slice(startIndex, endIndex);
-
   const categoryColor = categoryColors[slug] || "bg-blue-100 text-blue-800";
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Category Header */}
@@ -239,7 +213,6 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                 <li className="text-gray-900">{categoryName}</li>
               </ol>
             </nav>
-
             {/* Category Info */}
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-3 mb-4">
@@ -253,40 +226,28 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
               <p className="text-xl text-gray-600 mb-8">
                 Discover the latest {categoryName.toLowerCase()} news, insights, and trends
               </p>
-              <SearchBar className="max-w-2xl mx-auto" />
             </div>
           </div>
         </div>
       </section>
-
       {/* Articles Grid */}
       <section className="py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            {/* Results Header */}
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">
-                  {resolvedSearchParams.q ? `Search Results for "${resolvedSearchParams.q}" in ${categoryName}` : `All ${categoryName} Articles`}
+                  All {categoryName} Articles
                 </h2>
                 <p className="text-gray-600">
                   {categoryArticles.length} article{categoryArticles.length !== 1 ? 's' : ''} found
                 </p>
               </div>
-              <div className="flex items-center space-x-4">
-                <select className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                  <option value="latest">Latest</option>
-                  <option value="oldest">Oldest</option>
-                  <option value="popular">Most Popular</option>
-                  <option value="featured">Featured</option>
-                </select>
-              </div>
             </div>
-
             {/* Articles Grid */}
-            {paginatedArticles.length > 0 ? (
+            {categoryArticles.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {paginatedArticles.map((article) => (
+                {categoryArticles.map((article) => (
                   <ArticleCard key={article.id} article={article} />
                 ))}
               </div>
@@ -299,10 +260,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">No articles found</h3>
                 <p className="text-gray-600 mb-4">
-                  {resolvedSearchParams.q 
-                    ? `No articles found for "${resolvedSearchParams.q}" in ${categoryName}`
-                    : `No articles available in ${categoryName} yet.`
-                  }
+                  No articles available in {categoryName} yet.
                 </p>
                 <a
                   href="/articles"
@@ -312,49 +270,9 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                 </a>
               </div>
             )}
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="mt-12 flex items-center justify-center">
-                <nav className="flex items-center space-x-2">
-                  <a
-                    href={`/category/${slug}?page=${page - 1}${resolvedSearchParams.q ? `&q=${resolvedSearchParams.q}` : ''}`}
-                    className={`px-3 py-2 border border-gray-300 rounded-lg text-gray-500 hover:bg-gray-50 ${
-                      page === 1 ? 'opacity-50 cursor-not-allowed' : ''
-                    }`}
-                  >
-                    Previous
-                  </a>
-                  
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-                    <a
-                      key={pageNum}
-                      href={`/category/${slug}?page=${pageNum}${resolvedSearchParams.q ? `&q=${resolvedSearchParams.q}` : ''}`}
-                      className={`px-3 py-2 border rounded-lg ${
-                        pageNum === page
-                          ? 'bg-blue-600 text-white border-blue-600'
-                          : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      {pageNum}
-                    </a>
-                  ))}
-                  
-                  <a
-                    href={`/category/${slug}?page=${page + 1}${resolvedSearchParams.q ? `&q=${resolvedSearchParams.q}` : ''}`}
-                    className={`px-3 py-2 border border-gray-300 rounded-lg text-gray-500 hover:bg-gray-50 ${
-                      page === totalPages ? 'opacity-50 cursor-not-allowed' : ''
-                    }`}
-                  >
-                    Next
-                  </a>
-                </nav>
-              </div>
-            )}
           </div>
         </div>
       </section>
-
       {/* Related Categories */}
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4">

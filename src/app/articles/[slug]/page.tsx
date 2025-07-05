@@ -70,6 +70,12 @@ const mockArticles: Article[] = [
   }
 ];
 
+export async function generateStaticParams() {
+  return mockArticles.map((article) => ({
+    slug: article.slug,
+  }));
+}
+
 interface ArticlePageProps {
   params: Promise<{
     slug: string;
