@@ -164,10 +164,10 @@ interface CategoryPageProps {
   params: Promise<{
     slug: string;
   }>;
-  searchParams: {
+  searchParams: Promise<{
     q?: string;
     page?: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
@@ -190,6 +190,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 
 export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
   const { slug } = await params;
+  const resolvedSearchParams = await searchParams;
   const categoryName = categoryNames[slug];
   
   if (!categoryName) {
@@ -202,8 +203,8 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   );
 
   // Apply search filter if provided
-  if (searchParams.q) {
-    const query = searchParams.q.toLowerCase();
+  if (resolvedSearchParams.q) {
+    const query = resolvedSearchParams.q.toLowerCase();
     categoryArticles = categoryArticles.filter(article =>
       article.title.toLowerCase().includes(query) ||
       article.excerpt.toLowerCase().includes(query) ||
@@ -213,7 +214,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   }
 
   // Pagination
-  const page = parseInt(searchParams.page || '1');
+  const page = parseInt(resolvedSearchParams.page || '1');
   const articlesPerPage = 9;
   const totalPages = Math.ceil(categoryArticles.length / articlesPerPage);
   const startIndex = (page - 1) * articlesPerPage;
@@ -266,7 +267,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">
-                  {searchParams.q ? `Search Results for "${searchParams.q}" in ${categoryName}` : `All ${categoryName} Articles`}
+                  {resolvedSearchParams.q ? `Search Results for "${resolvedSearchParams.q}" in ${categoryName}` : `All ${categoryName} Articles`}
                 </h2>
                 <p className="text-gray-600">
                   {categoryArticles.length} article{categoryArticles.length !== 1 ? 's' : ''} found
@@ -298,8 +299,8 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">No articles found</h3>
                 <p className="text-gray-600 mb-4">
-                  {searchParams.q 
-                    ? `No articles found for "${searchParams.q}" in ${categoryName}`
+                  {resolvedSearchParams.q 
+                    ? `No articles found for "${resolvedSearchParams.q}" in ${categoryName}`
                     : `No articles available in ${categoryName} yet.`
                   }
                 </p>
@@ -317,7 +318,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
               <div className="mt-12 flex items-center justify-center">
                 <nav className="flex items-center space-x-2">
                   <a
-                    href={`/category/${slug}?page=${page - 1}${searchParams.q ? `&q=${searchParams.q}` : ''}`}
+                    href={`/category/${slug}?page=${page - 1}${resolvedSearchParams.q ? `&q=${resolvedSearchParams.q}` : ''}`}
                     className={`px-3 py-2 border border-gray-300 rounded-lg text-gray-500 hover:bg-gray-50 ${
                       page === 1 ? 'opacity-50 cursor-not-allowed' : ''
                     }`}
@@ -328,7 +329,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
                     <a
                       key={pageNum}
-                      href={`/category/${slug}?page=${pageNum}${searchParams.q ? `&q=${searchParams.q}` : ''}`}
+                      href={`/category/${slug}?page=${pageNum}${resolvedSearchParams.q ? `&q=${resolvedSearchParams.q}` : ''}`}
                       className={`px-3 py-2 border rounded-lg ${
                         pageNum === page
                           ? 'bg-blue-600 text-white border-blue-600'
@@ -340,7 +341,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
                   ))}
                   
                   <a
-                    href={`/category/${slug}?page=${page + 1}${searchParams.q ? `&q=${searchParams.q}` : ''}`}
+                    href={`/category/${slug}?page=${page + 1}${resolvedSearchParams.q ? `&q=${resolvedSearchParams.q}` : ''}`}
                     className={`px-3 py-2 border border-gray-300 rounded-lg text-gray-500 hover:bg-gray-50 ${
                       page === totalPages ? 'opacity-50 cursor-not-allowed' : ''
                     }`}
