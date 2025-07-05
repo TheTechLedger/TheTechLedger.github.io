@@ -28,9 +28,9 @@ class ApiClient {
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseUrl}${endpoint}`;
     
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...(options.headers as Record<string, string>),
     };
 
     if (this.apiKey) {
@@ -71,7 +71,8 @@ class ApiClient {
     });
 
     const endpoint = `/articles?${params.toString()}`;
-    return this.request<PaginatedResponse<ApiArticle>>(endpoint);
+    const response = await this.request<PaginatedResponse<ApiArticle>>(endpoint);
+    return response.data;
   }
 
   async getArticle(slug: string): Promise<ApiArticle> {
@@ -143,7 +144,8 @@ class ApiClient {
     });
 
     const endpoint = `/categories/${slug}/articles?${params.toString()}`;
-    return this.request<PaginatedResponse<ApiArticle>>(endpoint);
+    const response = await this.request<PaginatedResponse<ApiArticle>>(endpoint);
+    return response.data;
   }
 
   // Search Methods
@@ -159,7 +161,7 @@ class ApiClient {
 
     const url = `${this.baseUrl}/upload/image`;
     
-    const headers: HeadersInit = {};
+    const headers: Record<string, string> = {};
     if (this.apiKey) {
       headers['Authorization'] = `Bearer ${this.apiKey}`;
     }
