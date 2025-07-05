@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import ArticleCard, { Article } from '@/components/ArticleCard';
 
 export const metadata: Metadata = {
   title: 'The Tech Ledger - Latest Technology News',
@@ -7,79 +8,108 @@ export const metadata: Metadata = {
 };
 
 // Mock data for demonstration - this will be replaced with real API data
-const featuredArticles = [
+const featuredArticles: Article[] = [
   {
     id: 1,
+    slug: "apple-ai-integration-ios-18",
     title: "Apple Announces Revolutionary AI Integration in iOS 18",
     excerpt: "The latest iOS update brings groundbreaking artificial intelligence features that will transform how users interact with their devices.",
+    content: "Full article content here...",
     category: "Mobile Technology",
     author: "Tech Team",
     publishedAt: "2025-01-15",
     readTime: "5 min read",
-    image: "/api/placeholder/600/400"
+    featured: true,
+    tags: ["AI", "iOS", "Apple", "Mobile"]
   },
   {
     id: 2,
+    slug: "openai-gpt-5-release",
     title: "OpenAI Releases GPT-5: A New Era of AI Capabilities",
     excerpt: "The newest iteration of GPT promises unprecedented reasoning abilities and multimodal understanding.",
+    content: "Full article content here...",
     category: "Artificial Intelligence",
     author: "AI Reporter",
     publishedAt: "2025-01-14",
     readTime: "7 min read",
-    image: "/api/placeholder/600/400"
+    featured: true,
+    tags: ["AI", "OpenAI", "GPT-5", "Machine Learning"]
   },
   {
     id: 3,
+    slug: "tesla-autonomous-driving-breakthrough",
     title: "Tesla's Autonomous Driving Breakthrough: Level 4 Autonomy Achieved",
     excerpt: "Tesla announces major milestone in self-driving technology with new hardware and software updates.",
+    content: "Full article content here...",
     category: "Automotive Tech",
     author: "Auto Expert",
     publishedAt: "2025-01-13",
     readTime: "6 min read",
-    image: "/api/placeholder/600/400"
+    featured: true,
+    tags: ["Tesla", "Autonomous", "Self-driving", "Automotive"]
   }
 ];
 
-const latestNews = [
+const latestNews: Article[] = [
   {
     id: 4,
+    slug: "microsoft-quantum-computing-initiative",
     title: "Microsoft's New Quantum Computing Initiative",
     excerpt: "Microsoft invests $10 billion in quantum computing research and development.",
+    content: "Full article content here...",
     category: "Quantum Computing",
+    author: "Quantum Expert",
     publishedAt: "2025-01-15",
-    readTime: "3 min read"
+    readTime: "3 min read",
+    tags: ["Microsoft", "Quantum Computing", "Research"]
   },
   {
     id: 5,
+    slug: "google-privacy-cookie-alternatives",
     title: "Google's Privacy-First Approach: New Cookie Alternatives",
     excerpt: "Google introduces new privacy-focused tracking methods to replace third-party cookies.",
+    content: "Full article content here...",
     category: "Privacy & Security",
+    author: "Privacy Analyst",
     publishedAt: "2025-01-15",
-    readTime: "4 min read"
+    readTime: "4 min read",
+    tags: ["Google", "Privacy", "Cookies", "Security"]
   },
   {
     id: 6,
+    slug: "spacex-starship-orbital-test",
     title: "SpaceX's Starship Successfully Completes Orbital Test",
     excerpt: "Historic milestone achieved as Starship reaches orbit and returns safely to Earth.",
+    content: "Full article content here...",
     category: "Space Technology",
+    author: "Space Reporter",
     publishedAt: "2025-01-14",
-    readTime: "5 min read"
+    readTime: "5 min read",
+    tags: ["SpaceX", "Starship", "Space", "Orbital"]
   },
   {
     id: 7,
+    slug: "meta-vr-neural-interface",
     title: "Meta's VR Breakthrough: Neural Interface Integration",
     excerpt: "Meta announces development of brain-computer interface for next-generation VR experiences.",
+    content: "Full article content here...",
     category: "Virtual Reality",
+    author: "VR Specialist",
     publishedAt: "2025-01-14",
-    readTime: "6 min read"
+    readTime: "6 min read",
+    tags: ["Meta", "VR", "Neural Interface", "Brain-Computer"]
   },
   {
     id: 8,
+    slug: "amazon-drone-delivery-expansion",
     title: "Amazon's Drone Delivery Network Expands Nationwide",
     excerpt: "Amazon Prime Air launches in 50 new cities, revolutionizing last-mile delivery.",
+    content: "Full article content here...",
     category: "E-commerce",
+    author: "E-commerce Analyst",
     publishedAt: "2025-01-13",
-    readTime: "4 min read"
+    readTime: "4 min read",
+    tags: ["Amazon", "Drone Delivery", "E-commerce", "Logistics"]
   }
 ];
 
@@ -132,28 +162,8 @@ export default function HomePage() {
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {featuredArticles.map((article, index) => (
-              <article key={article.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                <div className="h-48 bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
-                  <span className="text-white text-lg font-semibold">Article Image</span>
-                </div>
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm font-semibold text-blue-600">{article.category}</span>
-                    <span className="text-sm text-gray-500">{article.readTime}</span>
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
-                    {article.title}
-                  </h3>
-                  <p className="text-gray-600 mb-4 line-clamp-3">
-                    {article.excerpt}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">By {article.author}</span>
-                    <span className="text-sm text-gray-500">{new Date(article.publishedAt).toLocaleDateString()}</span>
-                  </div>
-                </div>
-              </article>
+            {featuredArticles.map((article) => (
+              <ArticleCard key={article.id} article={article} variant="featured" />
             ))}
           </div>
         </div>
@@ -168,26 +178,7 @@ export default function HomePage() {
               <h2 className="text-3xl font-bold text-gray-900 mb-8">Latest News</h2>
               <div className="space-y-6">
                 {latestNews.map((article) => (
-                  <article key={article.id} className="border-b border-gray-200 pb-6 last:border-b-0">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <span className="text-sm font-semibold text-blue-600">{article.category}</span>
-                          <span className="text-sm text-gray-500">•</span>
-                          <span className="text-sm text-gray-500">{article.readTime}</span>
-                        </div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 transition-colors cursor-pointer">
-                          {article.title}
-                        </h3>
-                        <p className="text-gray-600 text-sm mb-2">
-                          {article.excerpt}
-                        </p>
-                        <span className="text-xs text-gray-500">
-                          {new Date(article.publishedAt).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
-                  </article>
+                  <ArticleCard key={article.id} article={article} variant="compact" />
                 ))}
               </div>
               <div className="mt-8">
