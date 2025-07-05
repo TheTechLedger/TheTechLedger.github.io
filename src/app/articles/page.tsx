@@ -16,8 +16,8 @@ export default function ArticlesPage() {
     search: searchParams.get('q') || '',
     category: searchParams.get('category') || '',
     tags: searchParams.get('tags')?.split(',') || [],
-    dateRange: searchParams.get('dateRange') || '',
-    sortBy: searchParams.get('sortBy') || 'latest',
+    dateRange: (searchParams.get('dateRange') as 'today' | 'week' | 'month' | 'quarter' | 'year') || undefined,
+    sortBy: (searchParams.get('sortBy') as 'latest' | 'oldest' | 'popular' | 'featured' | 'views') || 'latest',
   });
 
   // API hooks
@@ -78,7 +78,7 @@ export default function ArticlesPage() {
           </p>
           
           {/* Search Bar */}
-          <SearchBar onSearch={handleSearch} initialValue={filters.search} />
+          <SearchBar />
         </div>
       </div>
 
@@ -88,9 +88,9 @@ export default function ArticlesPage() {
           <div className="lg:col-span-1">
             <ArticleFilters
               categories={categories}
-              filters={filters}
-              onFilterChange={handleFilterChange}
-              loading={categoriesLoading}
+              selectedCategory={filters.category}
+              selectedTags={filters.tags}
+              dateRange={filters.dateRange}
             />
           </div>
 
