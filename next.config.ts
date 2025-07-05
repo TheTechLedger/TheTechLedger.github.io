@@ -3,10 +3,8 @@ import type { NextConfig } from "next";
 const repo = 'TheTechLedger.github.io';
 
 /** @type {import('next').NextConfig} */
-const nextConfig: NextConfig = {
+const nextConfig = {
   output: 'export',
-  basePath: `${repo}`,
-  assetPrefix: `${repo}/`,
   images: {
     unoptimized: true,
   },
