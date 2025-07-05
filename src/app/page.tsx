@@ -1,11 +1,8 @@
-import type { Metadata } from 'next';
+'use client';
+
 import Link from 'next/link';
 import ArticleCard, { Article } from '@/components/ArticleCard';
-
-export const metadata: Metadata = {
-  title: 'The Tech Ledger - Latest Technology News',
-  description: 'Stay updated with the latest technology news, trends, and insights from around the world.',
-};
+import { useFeaturedArticles, useArticles } from '@/hooks/useApi';
 
 // Mock data for demonstration - this will be replaced with real API data
 const featuredArticles: Article[] = [
@@ -123,6 +120,16 @@ const categories = [
 ];
 
 export default function HomePage() {
+  const { data: featuredData, loading: featuredLoading, error: featuredError } = useFeaturedArticles(3);
+  const { data: latestData, loading: latestLoading, error: latestError } = useArticles({ 
+    limit: 6, 
+    sortBy: 'latest',
+    status: 'published'
+  });
+
+  const featuredArticles = featuredData || [];
+  const latestNews = latestData?.articles || [];
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
@@ -161,11 +168,27 @@ export default function HomePage() {
             <p className="text-gray-600">The most important tech stories of the week</p>
           </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {featuredArticles.map((article) => (
-              <ArticleCard key={article.id} article={article} variant="featured" />
-            ))}
-          </div>
+          {featuredLoading ? (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="bg-gray-200 h-48 rounded-lg mb-4"></div>
+                  <div className="bg-gray-200 h-4 rounded mb-2"></div>
+                  <div className="bg-gray-200 h-4 rounded w-3/4"></div>
+                </div>
+              ))}
+            </div>
+          ) : featuredError ? (
+            <div className="text-center py-8">
+              <p className="text-red-600">Failed to load featured articles. Please try again later.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {featuredArticles.map((article: Article) => (
+                <ArticleCard key={article.id} article={article} variant="featured" />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -176,11 +199,29 @@ export default function HomePage() {
             {/* Latest News */}
             <div className="lg:col-span-2">
               <h2 className="text-3xl font-bold text-gray-900 mb-8">Latest News</h2>
-              <div className="space-y-6">
-                {latestNews.map((article) => (
-                  <ArticleCard key={article.id} article={article} variant="compact" />
-                ))}
-              </div>
+              
+              {latestLoading ? (
+                <div className="space-y-6">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div key={i} className="animate-pulse">
+                      <div className="bg-gray-200 h-32 rounded-lg mb-4"></div>
+                      <div className="bg-gray-200 h-4 rounded mb-2"></div>
+                      <div className="bg-gray-200 h-4 rounded w-3/4"></div>
+                    </div>
+                  ))}
+                </div>
+              ) : latestError ? (
+                <div className="text-center py-8">
+                  <p className="text-red-600">Failed to load latest news. Please try again later.</p>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {latestNews.map((article: Article) => (
+                    <ArticleCard key={article.id} article={article} variant="compact" />
+                  ))}
+                </div>
+              )}
+              
               <div className="mt-8">
                 <Link 
                   href="/articles" 
