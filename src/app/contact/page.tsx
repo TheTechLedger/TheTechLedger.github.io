@@ -2,12 +2,6 @@
 
 import { useState } from 'react';
 import { useNewsletterSubscription, useContactForm } from '@/hooks/useApi';
-import type { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: 'Contact Us - The Tech Ledger',
-  description: 'Get in touch with The Tech Ledger team. We\'d love to hear from you.',
-};
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({

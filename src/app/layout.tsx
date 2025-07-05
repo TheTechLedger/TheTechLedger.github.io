@@ -63,15 +63,16 @@ export default function RootLayout({
                 <h4 className="font-semibold mb-4">Quick Links</h4>
                 <ul className="space-y-2">
                   <li><a href="/" className="text-gray-300 hover:text-white transition-colors">Home</a></li>
-                  <li><a href="/about" className="text-gray-300 hover:text-white transition-colors">About</a></li>
-                  <li><a href="/contact" className="text-gray-300 hover:text-white transition-colors">Contact</a></li>
+                  <li><a href="/articles/" className="text-gray-300 hover:text-white transition-colors">Articles</a></li>
+                  <li><a href="/about/" className="text-gray-300 hover:text-white transition-colors">About</a></li>
+                  <li><a href="/contact/" className="text-gray-300 hover:text-white transition-colors">Contact</a></li>
                 </ul>
               </div>
               <div>
                 <h4 className="font-semibold mb-4">Legal</h4>
                 <ul className="space-y-2">
-                  <li><a href="/privacy" className="text-gray-300 hover:text-white transition-colors">Privacy Policy</a></li>
-                  <li><a href="/terms" className="text-gray-300 hover:text-white transition-colors">Terms of Service</a></li>
+                  <li><a href="/privacy/" className="text-gray-300 hover:text-white transition-colors">Privacy Policy</a></li>
+                  <li><a href="/terms/" className="text-gray-300 hover:text-white transition-colors">Terms of Service</a></li>
                 </ul>
               </div>
               <div>

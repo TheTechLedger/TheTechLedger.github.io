@@ -23,16 +23,19 @@ export default function Navigation() {
             <Link href="/" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
               Home
             </Link>
-            <Link href="/about" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+            <Link href="/articles/" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+              Articles
+            </Link>
+            <Link href="/about/" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
               About
             </Link>
-            <Link href="/contact" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+            <Link href="/contact/" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
               Contact
             </Link>
-            <Link href="/privacy" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+            <Link href="/privacy/" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
               Privacy
             </Link>
-            <Link href="/terms" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+            <Link href="/terms/" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
               Terms
             </Link>
           </div>
@@ -64,28 +67,35 @@ export default function Navigation() {
                 Home
               </Link>
               <Link 
-                href="/about" 
+                href="/articles/" 
+                className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Articles
+              </Link>
+              <Link 
+                href="/about/" 
                 className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
                 About
               </Link>
               <Link 
-                href="/contact" 
+                href="/contact/" 
                 className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Contact
               </Link>
               <Link 
-                href="/privacy" 
+                href="/privacy/" 
                 className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Privacy
               </Link>
               <Link 
-                href="/terms" 
+                href="/terms/" 
                 className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
