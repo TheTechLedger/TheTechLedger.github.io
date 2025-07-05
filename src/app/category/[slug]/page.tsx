@@ -161,9 +161,9 @@ const categoryNames: Record<string, string> = {
 };
 
 interface CategoryPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
   searchParams: {
     q?: string;
     page?: string;
@@ -171,7 +171,8 @@ interface CategoryPageProps {
 }
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
-  const categoryName = categoryNames[params.slug];
+  const { slug } = await params;
+  const categoryName = categoryNames[slug];
   
   if (!categoryName) {
     return {
@@ -187,8 +188,9 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   };
 }
 
-export default function CategoryPage({ params, searchParams }: CategoryPageProps) {
-  const categoryName = categoryNames[params.slug];
+export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
+  const { slug } = await params;
+  const categoryName = categoryNames[slug];
   
   if (!categoryName) {
     notFound();
@@ -196,7 +198,7 @@ export default function CategoryPage({ params, searchParams }: CategoryPageProps
 
   // Filter articles by category
   let categoryArticles = mockArticles.filter(article => 
-    article.category.toLowerCase().replace(/\s+/g, '-') === params.slug
+    article.category.toLowerCase().replace(/\s+/g, '-') === slug
   );
 
   // Apply search filter if provided
@@ -218,7 +220,7 @@ export default function CategoryPage({ params, searchParams }: CategoryPageProps
   const endIndex = startIndex + articlesPerPage;
   const paginatedArticles = categoryArticles.slice(startIndex, endIndex);
 
-  const categoryColor = categoryColors[params.slug] || "bg-blue-100 text-blue-800";
+  const categoryColor = categoryColors[slug] || "bg-blue-100 text-blue-800";
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -315,7 +317,7 @@ export default function CategoryPage({ params, searchParams }: CategoryPageProps
               <div className="mt-12 flex items-center justify-center">
                 <nav className="flex items-center space-x-2">
                   <a
-                    href={`/category/${params.slug}?page=${page - 1}${searchParams.q ? `&q=${searchParams.q}` : ''}`}
+                    href={`/category/${slug}?page=${page - 1}${searchParams.q ? `&q=${searchParams.q}` : ''}`}
                     className={`px-3 py-2 border border-gray-300 rounded-lg text-gray-500 hover:bg-gray-50 ${
                       page === 1 ? 'opacity-50 cursor-not-allowed' : ''
                     }`}
@@ -326,7 +328,7 @@ export default function CategoryPage({ params, searchParams }: CategoryPageProps
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
                     <a
                       key={pageNum}
-                      href={`/category/${params.slug}?page=${pageNum}${searchParams.q ? `&q=${searchParams.q}` : ''}`}
+                      href={`/category/${slug}?page=${pageNum}${searchParams.q ? `&q=${searchParams.q}` : ''}`}
                       className={`px-3 py-2 border rounded-lg ${
                         pageNum === page
                           ? 'bg-blue-600 text-white border-blue-600'
@@ -338,7 +340,7 @@ export default function CategoryPage({ params, searchParams }: CategoryPageProps
                   ))}
                   
                   <a
-                    href={`/category/${params.slug}?page=${page + 1}${searchParams.q ? `&q=${searchParams.q}` : ''}`}
+                    href={`/category/${slug}?page=${page + 1}${searchParams.q ? `&q=${searchParams.q}` : ''}`}
                     className={`px-3 py-2 border border-gray-300 rounded-lg text-gray-500 hover:bg-gray-50 ${
                       page === totalPages ? 'opacity-50 cursor-not-allowed' : ''
                     }`}
@@ -358,8 +360,8 @@ export default function CategoryPage({ params, searchParams }: CategoryPageProps
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Explore Other Categories</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {Object.entries(categoryNames).map(([slug, name]) => {
-                if (slug === params.slug) return null;
+              {Object.entries(categoryNames).map(([categorySlug, name]) => {
+                if (categorySlug === slug) return null;
                 return (
                   <a
                     key={slug}
