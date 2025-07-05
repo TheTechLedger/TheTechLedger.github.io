@@ -16,43 +16,20 @@ interface UseApiReturn<T> extends UseApiState<T> {
   setData: (data: T) => void;
 }
 
+// Dummy data for static export
+const dummyArticles: any[] = [];
+const dummyCategories: any[] = [];
+
 // Hook for fetching articles
 export function useArticles(filters: ArticleFilters = {}) {
   const [state, setState] = useState<UseApiState<any>>({
-    data: null,
-    loading: true,
+    data: { articles: dummyArticles, pagination: { page: 1, limit: 10, total: 0, totalPages: 1, hasNext: false, hasPrev: false } },
+    loading: false,
     error: null,
   });
-
-  const fetchArticles = useCallback(async () => {
-    try {
-      setState(prev => ({ ...prev, loading: true, error: null }));
-      const response = await apiClient.getArticles(filters);
-      const transformedArticles = transformApiArticlesToArticles(response.data);
-      setState({
-        data: {
-          articles: transformedArticles,
-          pagination: response.pagination,
-        },
-        loading: false,
-        error: null,
-      });
-    } catch (error) {
-      setState({
-        data: null,
-        loading: false,
-        error: error instanceof Error ? error.message : 'Failed to fetch articles',
-      });
-    }
-  }, [filters]);
-
-  useEffect(() => {
-    fetchArticles();
-  }, [fetchArticles]);
-
   return {
     ...state,
-    refetch: fetchArticles,
+    refetch: async () => {},
     setData: (data: any) => setState(prev => ({ ...prev, data })),
   };
 }
@@ -61,38 +38,12 @@ export function useArticles(filters: ArticleFilters = {}) {
 export function useArticle(slug: string) {
   const [state, setState] = useState<UseApiState<any>>({
     data: null,
-    loading: true,
+    loading: false,
     error: null,
   });
-
-  const fetchArticle = useCallback(async () => {
-    if (!slug) return;
-    
-    try {
-      setState(prev => ({ ...prev, loading: true, error: null }));
-      const apiArticle = await apiClient.getArticle(slug);
-      const transformedArticle = transformApiArticlesToArticles([apiArticle])[0];
-      setState({
-        data: transformedArticle,
-        loading: false,
-        error: null,
-      });
-    } catch (error) {
-      setState({
-        data: null,
-        loading: false,
-        error: error instanceof Error ? error.message : 'Failed to fetch article',
-      });
-    }
-  }, [slug]);
-
-  useEffect(() => {
-    fetchArticle();
-  }, [fetchArticle]);
-
   return {
     ...state,
-    refetch: fetchArticle,
+    refetch: async () => {},
     setData: (data: any) => setState(prev => ({ ...prev, data })),
   };
 }
@@ -100,37 +51,13 @@ export function useArticle(slug: string) {
 // Hook for fetching categories
 export function useCategories() {
   const [state, setState] = useState<UseApiState<any>>({
-    data: null,
-    loading: true,
+    data: dummyCategories,
+    loading: false,
     error: null,
   });
-
-  const fetchCategories = useCallback(async () => {
-    try {
-      setState(prev => ({ ...prev, loading: true, error: null }));
-      const apiCategories = await apiClient.getCategories();
-      const transformedCategories = apiCategories.map(transformApiCategoryToCategory);
-      setState({
-        data: transformedCategories,
-        loading: false,
-        error: null,
-      });
-    } catch (error) {
-      setState({
-        data: null,
-        loading: false,
-        error: error instanceof Error ? error.message : 'Failed to fetch categories',
-      });
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
-
   return {
     ...state,
-    refetch: fetchCategories,
+    refetch: async () => {},
     setData: (data: any) => setState(prev => ({ ...prev, data })),
   };
 }
@@ -138,37 +65,13 @@ export function useCategories() {
 // Hook for fetching featured articles
 export function useFeaturedArticles(limit: number = 3) {
   const [state, setState] = useState<UseApiState<any>>({
-    data: null,
-    loading: true,
+    data: dummyArticles,
+    loading: false,
     error: null,
   });
-
-  const fetchFeaturedArticles = useCallback(async () => {
-    try {
-      setState(prev => ({ ...prev, loading: true, error: null }));
-      const apiArticles = await apiClient.getFeaturedArticles(limit);
-      const transformedArticles = transformApiArticlesToArticles(apiArticles);
-      setState({
-        data: transformedArticles,
-        loading: false,
-        error: null,
-      });
-    } catch (error) {
-      setState({
-        data: null,
-        loading: false,
-        error: error instanceof Error ? error.message : 'Failed to fetch featured articles',
-      });
-    }
-  }, [limit]);
-
-  useEffect(() => {
-    fetchFeaturedArticles();
-  }, [fetchFeaturedArticles]);
-
   return {
     ...state,
-    refetch: fetchFeaturedArticles,
+    refetch: async () => {},
     setData: (data: any) => setState(prev => ({ ...prev, data })),
   };
 }
