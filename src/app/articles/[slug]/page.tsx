@@ -71,13 +71,14 @@ const mockArticles: Article[] = [
 ];
 
 interface ArticlePageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
-  const article = mockArticles.find(a => a.slug === params.slug);
+  const { slug } = await params;
+  const article = mockArticles.find(a => a.slug === slug);
   
   if (!article) {
     return {
@@ -107,8 +108,9 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   };
 }
 
-export default function ArticlePage({ params }: ArticlePageProps) {
-  const article = mockArticles.find(a => a.slug === params.slug);
+export default async function ArticlePage({ params }: ArticlePageProps) {
+  const { slug } = await params;
+  const article = mockArticles.find(a => a.slug === slug);
   
   if (!article) {
     notFound();
